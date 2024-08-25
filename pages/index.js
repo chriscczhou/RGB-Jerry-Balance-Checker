@@ -31,7 +31,7 @@ export default function Home() {
 
     return (
         <div>
-            <h1>Check JERRY Token Balances</h1>
+            <h1>Check JERRY Token Balances (twitter:@chainchaincat)</h1>
             <textarea
                 value={addresses}
                 onChange={(e) => setAddresses(e.target.value)}
