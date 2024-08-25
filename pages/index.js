@@ -8,8 +8,22 @@ export default function Home() {
     const handleCheckBalances = async () => {
         const addressArray = addresses.split('\n').filter(addr => addr.trim());
         try {
-            const response = await axios.post('/api/balance', { addresses: addressArray });
-            setBalances(response.data);
+            const responses = await Promise.all(addressArray.map(async (address) => {
+                const response = await axios.post('https://node.bihelix.io/api/ln/get_account_by_address', {
+                    address: address
+                });
+                return response.data;
+            }));
+
+            const balances = responses.map(response => {
+                const jerryAsset = response.data.find(asset => asset.asset_id === 'rgb:RspPWEW9-mzuSNHQ-dGCb054-bLjHPYi-$I9$Ih2-Fy9vxFU');
+                return {
+                    address: response.data[0].address,
+                    balance: jerryAsset ? jerryAsset.balance : 0
+                };
+            });
+
+            setBalances(balances);
         } catch (error) {
             console.error('Error checking balances:', error);
         }
@@ -41,4 +55,3 @@ export default function Home() {
         </div>
     );
 }
-
